@@ -24,10 +24,9 @@ esac
 done
 
 if [ "${ENV}" == "TEST" ]; then
-    # TODO, replace this with the actual URL of the test site.
-    SITE="http://education-test.gov.au/"
+    SITE="http://web.prod.presto.com.au"
 else
-    SITE="http://education.gov.au/"
+    SITE="https://www.presto.com.au"
 fi
 
 # Kick off CasperJS.

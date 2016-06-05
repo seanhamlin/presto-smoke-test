@@ -18,7 +18,7 @@ casper.options.viewportSize = {
   height: 800
 };
 
-// Do not track CasperJS in GA.
+// Do not invoke tracking sites when using CasperJS.
 casper.options.onResourceRequested = function(casper, requestData, request) {
   if (requestData.url.match(/google-analytics\.com/)) {
     casper.log('Request to GA. Aborting: ' + requestData.url, 'debug');
@@ -26,6 +26,14 @@ casper.options.onResourceRequested = function(casper, requestData, request) {
   }
   if (requestData.url.match(/pingdom\.net/)) {
     casper.log('Request to Pingdom. Aborting: ' + requestData.url, 'debug');
+    request.abort();
+  }
+  if (requestData.url.match(/nr-data\.net/)) {
+    casper.log('Request to New Relic. Aborting: ' + requestData.url, 'debug');
+    request.abort();
+  }
+  if (requestData.url.match(/doubleclick\.net/)) {
+    casper.log('Request to Double Click. Aborting: ' + requestData.url, 'debug');
     request.abort();
   }
 };
@@ -45,7 +53,8 @@ casper.on('resource.error', function(resourceError) {
   if (resourceError.url != "" &&
      !resourceError.url.match(/.*fonts\.net.*/) &&
      !resourceError.url.match(/.*pbs\.twimg\.com.*/) &&
-     !resourceError.url.match(/.*twitter\.com.*/)
+     !resourceError.url.match(/.*twitter\.com.*/) &&
+     !resourceError.url.match(/.*beacon\.krxd\.net.*/)
   ) {
     casper.log('Unable to load resource (#' + resourceError.id + 'URL:' + resourceError.url + ')', 'warning');
     casper.log('Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString, 'warning');
@@ -102,17 +111,14 @@ function absoluteUri(base, href) {
 function globalPageTests(casp) {
   casp.test.assertHttpStatus(200);
   casp.test.assertExists('title');
-  casp.test.assertTitleMatch(/Department of Education and Training/, 'Found the site name in the title');
-  casp.test.assertDoesntExist('.warning', 'No Drupal warnings found');
+  casp.test.assertTitleMatch(/Presto/, 'Found the site name in the title');
+  casp.test.assertDoesntExist('div.warning', 'No Drupal warnings found');
   casp.test.assertDoesntExist('.error', 'No Drupal errors found');
   casp.test.assertDoesntExist('.node-unpublished', 'No unpublished nodes found');
   casp.test.assertTextDoesntExist('PHP Fatal', 'No PHP fatals found');
 
   // GA tracker.
-  casp.test.assertMatch(casp.getPageContent(), /.*UA-18570220-13.*/i, 'Found the Google Analytics tracker');
-
-  // Try to find a fonts.com broken font banner.
-  casp.test.assertDoesntExist('#mti_wfs_colophon', 'No fonts.com banner found');
+  casp.test.assertMatch(casp.getPageContent(), /.*9ce3f17fb2e721101d72dcf53f251b255e048fc6.*/i, 'Found the Adobe DTM tracker');
 
   // Caching headers.
   //var foundCacheHeader = false;

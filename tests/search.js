@@ -3,21 +3,36 @@
  *
  * @see http://casperjs.readthedocs.org/en/latest/modules/tester.html
  */
-casper.test.begin('Search results', 13, function suite(test) {
+casper.test.begin('Search results', 27, function suite(test) {
 
-  casper.start(site + 'search/site/English?' + timestamp, function() {
+  casper.start(site + '/search/programme/minions?' + timestamp, function() {
     this.echo(this.getTitle());
     globalPageTests(this);
 
-    // Search form.
-    test.assertExists('#search-form');
-    test.assertVisible('#search-form .form-item-keys label');
-    test.assertVisible('#search-form .form-item-keys input[name=keys]');
-
     // Search results.
     test.assertEvalEquals(function() {
-      return document.querySelectorAll('ol.search-results h3.title').length;
-    }, 15, 'Found 15 search results');
+      return document.querySelectorAll('.programme-single').length;
+    }, 1, 'Found the minions movie in the search');
+  });
+
+  casper.thenOpen(site + '/search/series/kids?' + timestamp, function() {
+    this.echo(this.getTitle());
+    globalPageTests(this);
+
+    // Search results.
+    test.assertEval(function() {
+      return document.querySelectorAll('.pane-series-thumbnails .tv-single').length >= 2;
+    }, 'Found 2 kids TV series');
+  });
+
+  casper.thenOpen(site + '/search/person/kids?' + timestamp, function() {
+    this.echo(this.getTitle());
+    globalPageTests(this);
+
+    // Search results.
+    test.assertEval(function() {
+      return document.querySelectorAll('.person-list .person-link').length >= 1;
+    }, 'Found at least one person with kids in their name');
   });
 
   casper.run(function() {
