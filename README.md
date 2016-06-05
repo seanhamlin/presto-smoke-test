@@ -1,6 +1,6 @@
-# Education.gov.au smoke tests
+# Presto smoke tests
 
-General smoke tests for the education.gov.au site. The idea is to reduce manual effort by automating these checks as much as we can.
+General smoke tests for the www.presto.com.au site. The idea is to reduce manual effort by automating these checks as much as we can.
 
 ## Installation
 
